@@ -26,6 +26,7 @@ export class ProductManager {
             const stringify = JSON.stringify(parsed)
             const addJson = await fs.writeFile("./db/products.json", stringify)
             console.log("products.json created or edited!")
+            return data.id
         } catch (err){
             console.log("Something went wrong creating or updating the file: " + err)
             throw new Error ("Internal Server Error, we couldn't add that product.") 

@@ -6,7 +6,7 @@ export const getLiveProducts = (req, res) => { //Transformar a WebSocket
     getProduct
         .then((data)=>{
             const allProducts = data
-            res.render("realTimeProducts", allProducts)
+            res.render ("realTimeProducts", {}) 
         }).catch((err)=>{
             console.error(err)
         })

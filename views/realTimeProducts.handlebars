@@ -1,16 +1,5 @@
 <h2>This is a Live Version, products below will update in real time:</h2> 
-<button id="connect-btn" type="button">Press me to connect</button>
-<button id="print-btn" type="button">Press me to Print a Product</button>
+<button id="print-btn" type="button" class="btn btn-success">Press me to reload the Products</button>
 <div id="render-product">
 
 </div>
-{{#each games}}
-<div class="card" style="width: 18rem;">
-  <img class="card-img-top" src="..." alt="Card image cap">
-  <div class="card-body">
-    <h5 class="card-title">{{title}}</h5>
-    <p class="card-text">{{description}}</p>
-    <button id="eraser" type="button">Delete Product</button>
-  </div>
-</div>
-{{/each}}

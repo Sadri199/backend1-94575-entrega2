@@ -2,6 +2,7 @@ import express from "express"
 import http from "http"
 import { Server } from "socket.io"
 import handlebars from "express-handlebars"
+import mongoose from "mongoose"
 
 import homeRouter from "./routes/home.route.js"
 import liveProductsRouter from "./routes/realTime.route.js"
@@ -63,6 +64,14 @@ wsServer.on("connection", (socket)=> {
             console.error(data)
         })
     })
+})
+
+mongoose.connect("mongodb+srv://alrepedo35_db_user:JAooIGuCVQVFYa32@mycluster.0rd8vu0.mongodb.net/?appName=MyCluster")
+.then(()=>{
+    console.log("mongooseando")
+})
+.catch((err)=>{
+    console.error(err)
 })
 
 app.engine('handlebars', handlebars.engine())

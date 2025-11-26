@@ -1,4 +1,4 @@
-# Backend 1 - Entrega 2
+# Backend 1 - Final Project (EDIT)
 
 A simple backend application built with **Node.js**, **Express** and **Socket Io** for Coderhouse's course.
 This project serves as a boilerplate for building RESTful APIs, it has 2 routes, one for Products and one for Carts; Products has full CRUD (Create, Read, Update, Delete) and Carts only has Create and Read (partially).

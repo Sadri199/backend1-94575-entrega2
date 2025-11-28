@@ -1,84 +1,77 @@
-import { ProductManager } from "../managers/productManager.js"
+import productModel from "../models/products.model.js"
 
-export const getProduct = (req, res)=> {
-    const newManager = new ProductManager()
-    const readJson = newManager.getProduct()
-    readJson
-        .then((data) =>{
-            res.status(200)
-            res.send(data)
-        })
-        .catch((data)=> {
-            res.status(500)
-            res.send({Error: `${data.message}`})
-        })
-}
-
-export const createProduct = (req, res)=> {
-    const newProduct = {
-        title:  req.body.title,
-        description: req.body.description,
-        code: req.body.code,
-        price: req.body.price,
-        status: req.body.status,
-        stock: req.body.stock,
-        category: req.body.category,
-        thumbnail: req.body.thumbnail
+export const getProduct = async (req, res)=> { //Agregar skip, limit sort todas las cosas, manipular la response
+    try{
+        const query = await productModel.find({})
+        console.log("Accesing the Database correctly!")
+        res.send(query).status(200)
     }
-
-    const newManager = new ProductManager(newProduct.title,newProduct.description,newProduct.code,newProduct.price,newProduct.status,newProduct.stock,newProduct.category,newProduct.thumbnail)
-    const createProduct = newManager.addProduct(newManager)
-    createProduct
-        .then(()=> {
-            res.status(200)
-            res.json({status: "Succesful", message: "Product added correctly to our Database!"})
-        })
-        .catch((data)=> {
-            res.status(500)
-            res.send({Error: `${data.message}`})
-        })
+    catch(error){
+        res.send(error).status(500)
+    }
 }
 
-export const getProductByID = (req, res)=> {
-    const id = req.params.pid
-    const newManager = new ProductManager()
-    const readJson = newManager.getProductByID(id)
-    readJson
-        .then((data) =>{
-            res.status(200)
-            res.send(data)
+export const createProduct = async (req, res)=> { //Listo
+    const {title, description, code, price, status, stock, category, thumbnail} = req.body
+    
+    try{
+        const dbCreate = await productModel.create({
+            title,
+            description,
+            code,
+            price,
+            status,
+            stock,
+            category,
+            thumbnail
         })
-        .catch((data)=> {
-            res.status(500)
-            res.send({Error: `${data.message}`})
-        })
+        res.send({message: "Product created succesfully", product: dbCreate}).status(200)
+    } catch (error) {
+        res.status(500).send({message: "We couldn't create the product!", error: error.message})
+    }
 }
 
-export const updateProduct = (req, res)=> {
+export const getProductByID = async (req, res)=> { //Listo
     const id = req.params.pid
-    const productData = req.body
-    const newManager = new ProductManager()
-    const productUpdate = newManager.updateProduct(id, productData)
-    productUpdate
-        .then((data) => {
-            res.status(201)
-            res.send(data)
-        }).catch((data)=> {
-            res.status(500)
-            res.send({Error: `${data.message}`})
-        })
+
+    try{
+        const query = await productModel.findById(id)
+        console.log(`Retrieving product ${id} correctly`)
+        res.status(200).send({product: query})
+    }
+    catch(err){
+        res.status(404).send({message: "That ID isn't in the Database or is in an incorrect format, try again."})
+        throw err
+    }
 }
 
-export const deleteProduct = (req, res) => {
+export const updateProduct = async (req, res)=> { //Listo
     const id = req.params.pid
-    const newManager = new ProductManager()
-    const productDelete = newManager.deleteProduct(id)
-    productDelete
-        .then((data) => {
-            res.status(202)
-            res.send({Message: `${data}`})
-        }).catch((data)=> {
-            res.status(500)
-            res.send({Error: `${data.message}`})
-        })
+    const {...data} = req.body
+
+    try{
+        const update = await productModel.findByIdAndUpdate(id, {...data})
+        const query = await productModel.findById(id)
+        console.log(`Editing product ${id} correctly!`)
+        res.status(200).send({product: query})
+    }catch (err){
+        res.status(404).send({message: "That ID isn't in the Database or is in an incorrect format, try again."})
+        throw err
+    }
+}
+
+export const deleteProduct = async (req, res) => { //Listo
+    const id = req.params.pid
+
+    try{
+        const deleteMe = await productModel.findByIdAndDelete(id)
+        if(!deleteMe){
+            throw new Error ("ID doesn't exists")
+        }
+        console.log(`Deleting product ${id} correctly!`)
+        res.status(200).send({message: `Product with ${id} deleted correctly!`})
+    }catch (err){
+        res.status(404).send({message: `Product with ${id} doesn't exist!`})
+        throw err
+    }
 }

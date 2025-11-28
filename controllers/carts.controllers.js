@@ -1,21 +1,24 @@
 import { CartManager } from "../managers/cartManager.js"
+import cartModel from "../models/carts.models.js"
 
-export const createCart = (req,res) => {
-    const newCart = {
-        products:  req.body.products,
-    }
+export const createCart = async (req,res) => {
 
-    const newCartManager = new CartManager(newCart)
-    const cartCreate = newCartManager.createCart(newCart)
-    cartCreate
-        .then((id)=> {
-            res.status(200)
-            res.send({Message: `Your cart was created correctly! ID: ${id}`})
-        })
-        .catch((data)=> {
-            res.status(500)
-            res.send({Error: `${data.err}`})
-        })
+    const newCart = await cartModel.create({}) //no funca
+    res.send("Cart created.")
+    // const newCart = {
+    //     products:  req.body.products,
+    // }
+    // const newCartManager = new CartManager(newCart)
+    // const cartCreate = newCartManager.createCart(newCart)
+    // cartCreate
+    //     .then((id)=> {
+    //         res.status(200)
+    //         res.send({Message: `Your cart was created correctly! ID: ${id}`})
+    //     })
+    //     .catch((data)=> {
+    //         res.status(500)
+    //         res.send({Error: `${data.err}`})
+    //     })
 }
 
 export const getCart = (req, res)=>{

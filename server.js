@@ -66,14 +66,6 @@ wsServer.on("connection", (socket)=> {
     })
 })
 
-mongoose.connect("mongodb+srv://alrepedo35_db_user:JAooIGuCVQVFYa32@mycluster.0rd8vu0.mongodb.net/?appName=MyCluster")
-.then(()=>{
-    console.log("mongooseando")
-})
-.catch((err)=>{
-    console.error(err)
-})
-
 app.engine('handlebars', handlebars.engine())
 app.set('view engine', 'handlebars')
 
@@ -84,7 +76,16 @@ app.use("/realtimeproducts", liveProductsRouter)
 app.use("/api/products", productsRouter)
 app.use("/api/carts", cartsRouter)
 
-export const openServer = () => {httpServer.listen(PORT, () => {
-    console.log(`Server open at ${PORT}`)
-    console.log(`Go to http://localhost:8080`)
-}) }
+
+export const openServer = () => {mongoose.connect("mongodb+srv://alrepedo35_db_user:JAooIGuCVQVFYa32@mycluster.0rd8vu0.mongodb.net/Backend1")
+    .then(()=>{
+        console.log("mongooseando")
+        httpServer.listen(PORT, () => {
+        console.log(`Server open at ${PORT}`)
+        console.log(`Go to http://localhost:8080`)
+        })
+    })
+    .catch((err)=>{
+        console.error(err)
+    })
+}

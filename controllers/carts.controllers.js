@@ -1,55 +1,50 @@
-import { CartManager } from "../managers/cartManager.js"
 import cartModel from "../models/carts.models.js"
 
-export const createCart = async (req,res) => {
-
-    const newCart = await cartModel.create({}) //no funca
-    res.send("Cart created.")
-    // const newCart = {
-    //     products:  req.body.products,
-    // }
-    // const newCartManager = new CartManager(newCart)
-    // const cartCreate = newCartManager.createCart(newCart)
-    // cartCreate
-    //     .then((id)=> {
-    //         res.status(200)
-    //         res.send({Message: `Your cart was created correctly! ID: ${id}`})
-    //     })
-    //     .catch((data)=> {
-    //         res.status(500)
-    //         res.send({Error: `${data.err}`})
-    //     })
+export const createCart = async (req,res) => { //Listo
+    try{
+        const newCart = await cartModel.create({products: []})
+        console.log("The cart was created correctly in the Database.")
+        res.status(202).send({message: "Cart created correctly!", id: newCart._id})
+    } catch (err){
+        res.status(500).send({message: "We couldn't create the Cart!", error: err})
+        throw err
+    }
 }
 
-export const getCart = (req, res)=>{
+export const getCart = async (req, res)=>{ //Listo
     const id = req.params.cid
-    const newCartManager = new CartManager()
-    const cartGet = newCartManager.getCart(id)
-    cartGet
-        .then((data) =>{
-            res.status(200)
-            res.send(data)
-        })
-        .catch((data)=> {
-            res.status(500)
-            res.send({Error: `${data}`})
-        })
+
+    try{
+        const query = await cartModel.findById(id)
+        console.log(`Retrieving Cart ${id} correctly`)
+        res.status(200).send({cart: query})
+    } catch (err){
+        res.status(404).send({message: "That ID isn't in the Database or is in an incorrect format, try again."})
+        throw err
+    }
 }
 
-export const addProductToCart = (req, res)=>{
+export const addProductToCart = async (req, res)=>{ //Listo, Populate???
     const cid = req.params.cid
     const pid = req.params.pid
     const quantity = req.body.quantity
-    
-    const newCartManager = new CartManager()
-    const productAdd = newCartManager.addToCart(cid, pid, quantity)
-    productAdd
-        .then((data) =>{
-            res.status(200)
-            res.send({Message: data})
-        })
-        .catch((err)=> {
-            res.status(500)
-            res.send({Error: err.message})
-        })
+    let flag = false
+
+    try{
+        if(quantity < 1){
+            flag = true
+            throw new Error ("Quantity must be 1 or Higher.")
+        }
+        const update = await cartModel.findByIdAndUpdate(cid, {products: [{product: pid, quantity}]})
+        const query = await cartModel.findById(cid)
+        console.log(`Cart updated correctly! We added ${quantity} units of the Product ${pid} !`)
+        res.status(200).send({cart: query})
+    } catch (err){
+        if (flag){
+            res.status(500).send({message: err.message})
+            throw err
+        }
+        res.status(404).send({message: "That ID isn't in the Database or is in an incorrect format, try again."})
+        throw err
+    }
 }

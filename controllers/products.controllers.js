@@ -1,10 +1,14 @@
 import productModel from "../models/products.model.js"
 
 export const getProduct = async (req, res)=> { //Agregar skip, limit sort todas las cosas, manipular la response
+
+    const {sortField, sortAsc, skip, limit} = req.query
+
     try{
-        const query = await productModel.find({})
+        const query = await productModel.find({}).limit(limit).skip(skip).sort(sortField)
         console.log("Accesing the Database correctly!")
-        res.send(query).status(200)
+
+        res.send(query).status(200) //Editar la response con todas las taradeces que piden
     }
     catch(error){
         res.send(error).status(500)

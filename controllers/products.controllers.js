@@ -1,14 +1,43 @@
 import productModel from "../models/products.model.js"
 
-export const getProduct = async (req, res)=> { //Agregar skip, limit sort todas las cosas, manipular la response
+export const getProduct = async (req, res)=> { //manipular la response
 
-    const {sortField, sortAsc, skip, limit} = req.query
+    const {page=1, sortBy, sort, limit=0} = req.query
+
+    const queryField = req.query.filterField
+    const queryTerm = req.query.filterBy
+    const queryObject = {}
+    queryObject[queryField] = queryTerm
 
     try{
-        const query = await productModel.find({}).limit(limit).skip(skip).sort(sortField)
-        console.log("Accesing the Database correctly!")
+        if(!sortBy){
+            const query = await productModel.find(queryObject).limit(limit).skip(parseInt((page -1)*limit))
+            console.log("Accesing the Database correctly without sorting!")
 
-        res.send(query).status(200) //Editar la response con todas las taradeces que piden
+            const count = await productModel.countDocuments(queryObject)
+            const intPage = parseInt(page)
+            const url = req.originalUrl
+
+
+            const response = {
+                status: "success",
+                payload: query,
+                totalPages: limit == 0 ? 0 : (count / limit),
+                prevPage: intPage-1 < 1 ? "There are no more pages!" : intPage -1,
+                nextPage: intPage >= (count/limit) || limit == 0 ? "There are no more pages!" : intPage +1,
+                page: intPage,
+                hasPrevPage: intPage-1 < 1 ? false : true,
+                hasNextPage: intPage >= (count/limit) || limit == 0 ? false : true,
+                prevLink: intPage-1 < 1 ? null : `${url.replace(`page=${intPage}`, `page=${intPage -1}`)}`,
+                nextLink: intPage >= (count/limit) || limit == 0 ? null : `${url.replace(`page=${intPage}`, `page=${intPage +1}`)}`
+            }
+
+            res.send(response).status(200)
+        }else{
+            const query = await productModel.find(queryObject).limit(limit).skip(parseInt(skip)).sort([[sortBy, parseInt(sort)]])
+            console.log("Accesing the Database correctly!")
+            res.send(query).status(200) //Editar la response con todas las taradeces que piden
+        }
     }
     catch(error){
         res.send(error).status(500)

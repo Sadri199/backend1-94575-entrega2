@@ -1,8 +1,8 @@
 import productModel from "../models/products.model.js"
 
-export const getProduct = async (req, res)=> { //manipular la response
+export const getProduct = async (req, res)=> {
 
-    const {page=1, sortBy, sort, limit=0} = req.query
+    const {page=1, sortBy="price", sort=1, limit=0} = req.query
 
     const queryField = req.query.filterField
     const queryTerm = req.query.filterBy
@@ -10,41 +10,34 @@ export const getProduct = async (req, res)=> { //manipular la response
     queryObject[queryField] = queryTerm
 
     try{
-        if(!sortBy){
-            const query = await productModel.find(queryObject).limit(limit).skip(parseInt((page -1)*limit))
-            console.log("Accesing the Database correctly without sorting!")
+        const query = await productModel.find(queryObject).limit(limit).skip(parseInt((page -1)*limit)).sort([[sortBy, parseInt(sort)]])
+        console.log("Accesing the Database correctly!")
 
-            const count = await productModel.countDocuments(queryObject)
-            const intPage = parseInt(page)
-            const url = req.originalUrl
+        const count = await productModel.countDocuments(queryObject)
+        const intPage = parseInt(page)
+        const url = req.originalUrl
 
-
-            const response = {
-                status: "success",
-                payload: query,
-                totalPages: limit == 0 ? 0 : (count / limit),
-                prevPage: intPage-1 < 1 ? "There are no more pages!" : intPage -1,
-                nextPage: intPage >= (count/limit) || limit == 0 ? "There are no more pages!" : intPage +1,
-                page: intPage,
-                hasPrevPage: intPage-1 < 1 ? false : true,
-                hasNextPage: intPage >= (count/limit) || limit == 0 ? false : true,
-                prevLink: intPage-1 < 1 ? null : `${url.replace(`page=${intPage}`, `page=${intPage -1}`)}`,
-                nextLink: intPage >= (count/limit) || limit == 0 ? null : `${url.replace(`page=${intPage}`, `page=${intPage +1}`)}`
-            }
-
-            res.send(response).status(200)
-        }else{
-            const query = await productModel.find(queryObject).limit(limit).skip(parseInt(skip)).sort([[sortBy, parseInt(sort)]])
-            console.log("Accesing the Database correctly!")
-            res.send(query).status(200) //Editar la response con todas las taradeces que piden
+        const response = {
+            status: "success",
+            payload: query,
+            totalPages: limit == 0 ? 0 : Math.ceil(count / limit),
+            prevPage: intPage-1 < 1 ? "There are no more pages!" : intPage -1,
+            nextPage: intPage >= (count/limit) || limit == 0 ? "There are no more pages!" : intPage +1,
+            page: intPage,
+            hasPrevPage: intPage-1 < 1 ? false : true,
+            hasNextPage: intPage >= (count/limit) || limit == 0 ? false : true,
+            prevLink: intPage-1 < 1 ? null : `${url.replace(`page=${intPage}`, `page=${intPage -1}`)}`,
+            nextLink: intPage >= (count/limit) || limit == 0 ? null : `${url.replace(`page=${intPage}`, `page=${intPage +1}`)}`
         }
+
+        res.send(response).status(200)
     }
     catch(error){
-        res.send(error).status(500)
+        res.status(500).send({status: "error",payload: error})
     }
 }
 
-export const createProduct = async (req, res)=> { //Listo
+export const createProduct = async (req, res)=> {
     const {title, description, code, price, status, stock, category, thumbnail} = req.body
     
     try{
@@ -64,7 +57,7 @@ export const createProduct = async (req, res)=> { //Listo
     }
 }
 
-export const getProductByID = async (req, res)=> { //Listo
+export const getProductByID = async (req, res)=> {
     const id = req.params.pid
 
     try{
@@ -78,7 +71,7 @@ export const getProductByID = async (req, res)=> { //Listo
     }
 }
 
-export const updateProduct = async (req, res)=> { //Listo
+export const updateProduct = async (req, res)=> {
     const id = req.params.pid
     const {...data} = req.body
 
@@ -93,7 +86,7 @@ export const updateProduct = async (req, res)=> { //Listo
     }
 }
 
-export const deleteProduct = async (req, res) => { //Listo
+export const deleteProduct = async (req, res) => {
     const id = req.params.pid
 
     try{

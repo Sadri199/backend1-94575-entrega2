@@ -24,7 +24,7 @@ export const getCart = async (req, res)=>{
     }
 }
 
-export const addProductToCart = async (req, res)=>{ //Arreglado, Populate???
+export const addProductToCart = async (req, res)=>{ //Populate???
     const cid = req.params.cid
     const pid = req.params.pid
     const quantity = req.body.quantity
@@ -37,20 +37,22 @@ export const addProductToCart = async (req, res)=>{ //Arreglado, Populate???
         }
 
         const duplicate = await cartModel.find({_id: cid, "products.product": pid})
-        console.log(duplicate)
 
-        if(duplicate == []){
-            s
+        if(duplicate.length == 0){
+            const update = await cartModel.findByIdAndUpdate(cid,
+            {$addToSet: {products: [{product: pid, quantity}]}},
+            { runValidators: true, new: true}
+            )
+            console.log(`Cart updated correctly! We added ${quantity} units of the Product ${pid} !`)
+            res.status(200).send({message: `Product ${pid} added to the cart correctly!`,cart: update})
+        }else{
+            const update = await cartModel.findOne({_id: cid}, 
+                {products: {$elemMatch: {product: pid}}})
+                update.products[0].quantity = quantity
+            
+            await update.save()
+            res.status(200).send({message: `Product ${pid} edited correctly!`,cart: update})
         }
-
-        // const update = await cartModel.findByIdAndUpdate(cid, //probar con update solo
-        //     {$addToSet: {products: [{product: pid, quantity}]}},
-        //     { runValidators: true, new: true}
-        //     )
-        // console.log(`Cart updated correctly! We added ${quantity} units of the Product ${pid} !`)
-
-        res.status(200).send({cart: duplicate})
-        //res.status(200).send({cart: update})
     } catch (err){
         if (flag){
             res.status(500).send({message: err.message})
@@ -61,17 +63,22 @@ export const addProductToCart = async (req, res)=>{ //Arreglado, Populate???
     }
 }
 
-export const deleteProductFromCart = async (req, res) => { //Listo
+export const deleteProductFromCart = async (req, res) => {
     const cid = req.params.cid
     const pid = req.params.pid
     try{
-        const query = await cartModel.findOneAndUpdate(
-            {_id: cid},
-            {$pull: {products:{product: pid}}},
-            {new: true}
-        )
-
-        res.status(202).send(query)
+        const validate = await cartModel.findOne({_id: cid, "products.product": pid})
+        console.log(validate)
+        if(!validate){
+            res.status(404).send({status: "error", message: "Product doesn't exist or is already erased from the cart."})
+        }else{
+            const query = await cartModel.findOneAndUpdate(
+                {_id: cid},
+                {$pull: {products:{product: pid}}},
+                {new: true}
+            )
+            res.status(202).send({status: "success", message: "Product erased correctly", payload: query})
+        }
     }catch(err){
         res.status(500).send({message: "We couldn't find the product or the cart."})
     }
@@ -81,15 +88,37 @@ export const clearCart = async (req, res) => {
     const cid = req.params.cid
 
     try{
-        const query = await cartModel.findOneAndUpdate(
+        const query = await cartModel.findOneAndReplace(
             {_id: cid},
-            {$pullAll: {}}, // no funciona
+            {products: []},
             {new: true}
         )
 
         res.status(202).send({message: "All products erased from cart!", payload:query})
     }catch(err){
         console.log(err)
-        res.status(500).send({message: "We couldn't find the product or the cart."})
+        res.status(500).send({message: "We couldn't clear the cart."})
+    }
+}
+
+export const updateCartBulk = async (req, res) => {
+    const cid = req.params.cid
+
+    const newProducts = req.body
+
+    // const replace = await cartModel.findOneAndReplace({_id: cid},
+    //     {products: newProducts.products},
+    //     {new: true}
+    // )
+    try{
+        const update = await cartModel.findByIdAndUpdate(cid,
+                {$set: {products: newProducts.products}},
+                { runValidators: true, new: true}
+                )
+    
+        res.status(200).send({status: "success", payload: update})
+    }catch (err){
+        console.error(err)
+        res.status(500).send({status: "error", message: "Something went wrong."})
     }
 }

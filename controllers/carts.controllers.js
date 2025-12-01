@@ -24,7 +24,7 @@ export const getCart = async (req, res)=>{
     }
 }
 
-export const addProductToCart = async (req, res)=>{ //Populate???
+export const addProductToCart = async (req, res)=>{
     const cid = req.params.cid
     const pid = req.params.pid
     const quantity = req.body.quantity
@@ -103,22 +103,31 @@ export const clearCart = async (req, res) => {
 
 export const updateCartBulk = async (req, res) => {
     const cid = req.params.cid
-
     const newProducts = req.body
 
-    // const replace = await cartModel.findOneAndReplace({_id: cid},
-    //     {products: newProducts.products},
-    //     {new: true}
-    // )
     try{
-        const update = await cartModel.findByIdAndUpdate(cid,
-                {$set: {products: newProducts.products}},
-                { runValidators: true, new: true}
-                )
-    
-        res.status(200).send({status: "success", payload: update})
+        const query = await cartModel.find({_id: cid})
+
+        const compareArrays = (a, b) => {
+            return JSON.stringify(a) === JSON.stringify(b);
+            }
+        
+        const transformListA = newProducts.products.map(item=>item.product)
+        const transformListB = query[0].products.map(item=>item.product)
+
+        const validate = compareArrays(transformListA, transformListB)
+
+        if(!validate){
+            res.status(404).send({status: "error", message: "This endpoint is only to update quantities of already existing products in the cart, it isn't for adding products to the cart."})
+        }else{
+            const replace = await cartModel.findOneAndReplace({_id: cid},
+                {products: newProducts.products},
+                {runValidators: true, new: true}
+            )
+            res.status(200).send({status: "success", payload: replace})
+        }
     }catch (err){
         console.error(err)
-        res.status(500).send({status: "error", message: "Something went wrong."})
+        res.status(500).send({status: "error", message: err})
     }
-}
+}  

@@ -19,7 +19,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/api/products",
+							"raw": "localhost:8080/api/products?page=1&limit=5",
 							"host": [
 								"localhost"
 							],
@@ -27,6 +27,28 @@
 							"path": [
 								"api",
 								"products"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								},
+								{
+									"key": "sortBy",
+									"value": "price",
+									"description": "Only use \"stock\" or \"price\"",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "-1",
+									"description": "Only use \"1\" or \"-1\"",
+									"disabled": true
+								}
 							]
 						}
 					},
@@ -38,7 +60,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/api/products/978773",
+							"raw": "localhost:8080/api/products/69275dbc6add3efe422333ff",
 							"host": [
 								"localhost"
 							],
@@ -46,7 +68,7 @@
 							"path": [
 								"api",
 								"products",
-								"978773"
+								"69275dbc6add3efe422333ff"
 							]
 						}
 					},
@@ -59,7 +81,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Sonic 9\",\r\n    \"description\": \"Like Sonic 3 but 3 times better\",\r\n    \"code\": \"BTLG-9\",\r\n    \"price\": 100,\r\n    \"status\": true,\r\n    \"stock\": 3,\r\n    \"category\": \"Platformer\",\r\n    \"thumbnail\": [\r\n        \"https://vignette2.wikia.nocookie.net/bootleggames/images/e/ec/Bonio-sonic5.jpg/revision/latest?cb=20100821084722\"\r\n    ]\r\n}",
+							"raw": "{\r\n    \"title\": \"Sonic 29\",\r\n    \"description\": \"Like Sonic 3 but 6 times better\",\r\n    \"code\": \"BTLG-985\",\r\n    \"price\": 105,\r\n    \"status\": true,\r\n    \"stock\": 43,\r\n    \"category\": \"Platformer\",\r\n    \"thumbnail\": [\r\n        \"https://vignette2.wikia.nocookie.net/bootleggames/images/e/ec/Bonio-sonic5.jpg/revision/latest?cb=20100821084722\"\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -87,7 +109,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Gran Turismo 5\",\r\n    \"description\": \"Just like the real thing\",\r\n    \"code\": \"BTLG-3\",\r\n    \"price\": 750,\r\n    \"status\": false,\r\n    \"stock\": 14,\r\n    \"category\": \"Racing Game\",\r\n    \"thumbnail\": [\r\n        \"https://static.wikia.nocookie.net/bootleggames/images/4/42/GT5_SEGALogo.jpg/revision/latest?cb=20150222193719\"\r\n    ],\r\n    \"id\": 151465156181981891891\r\n}",
+							"raw": "{\r\n    \"stock\": 978\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -95,7 +117,7 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/products/522002",
+							"raw": "localhost:8080/api/products/69275dbc6add3efe422333ff",
 							"host": [
 								"localhost"
 							],
@@ -103,7 +125,7 @@
 							"path": [
 								"api",
 								"products",
-								"522002"
+								"69275dbc6add3efe422333ff"
 							]
 						}
 					},
@@ -115,7 +137,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/api/products/1393511",
+							"raw": "localhost:8080/api/products/6928d83dfb1f4a4f48bec548",
 							"host": [
 								"localhost"
 							],
@@ -123,7 +145,7 @@
 							"path": [
 								"api",
 								"products",
-								"1393511"
+								"6928d83dfb1f4a4f48bec548"
 							]
 						}
 					},
@@ -168,7 +190,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/api/carts/2515387",
+							"raw": "localhost:8080/api/carts/692b5d071047a8ce61b2f2cf",
 							"host": [
 								"localhost"
 							],
@@ -176,7 +198,7 @@
 							"path": [
 								"api",
 								"carts",
-								"2515387"
+								"692b5d071047a8ce61b2f2cf"
 							]
 						}
 					},
@@ -189,7 +211,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"quantity\": 26\r\n}",
+							"raw": "{\r\n    \"quantity\": 2\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -197,7 +219,7 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/carts/2309771/product/123358999",
+							"raw": "localhost:8080/api/carts/692b5d071047a8ce61b2f2cf/product/79415138",
 							"host": [
 								"localhost"
 							],
@@ -205,9 +227,88 @@
 							"path": [
 								"api",
 								"carts",
-								"2309771",
+								"692b5d071047a8ce61b2f2cf",
 								"product",
-								"123358999"
+								"79415138"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Specific Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/carts/692b5d071047a8ce61b2f2cf/product/88",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"carts",
+								"692b5d071047a8ce61b2f2cf",
+								"product",
+								"88"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Clear Cart",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Clear Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/carts/692b5d071047a8ce61b2f2cf",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"carts",
+								"692b5d071047a8ce61b2f2cf"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Cart BUlk",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"products\": [\r\n        {\r\n            \"product\": \"88\",\r\n            \"quantity\": 49\r\n        },\r\n        {\r\n            \"product\": \"z\",\r\n            \"quantity\": 40\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/carts/692b5d071047a8ce61b2f2cf",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"carts",
+								"692b5d071047a8ce61b2f2cf"
 							]
 						}
 					},
